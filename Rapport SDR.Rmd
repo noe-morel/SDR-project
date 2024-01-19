@@ -15,7 +15,7 @@ library(plotly)
 ```{r import}
 detail_departemental <- readr::read_delim("barometre-resultats-detail-departemental.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
 detail_regional <- readr::read_delim("barometre-resultats-detail-regional.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
-detail_national <- readr::read_delim("barometre-resultats-synthese-national.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
+detail_national <- readr::read_delim("barometre-resultats-detail-national.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
 synthese_departemental <- readr::read_delim("barometre-resultats-synthese-departemental.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
 synthese_regional <- readr::read_delim("barometre-resultats-synthese-regional.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
 synthese_national <- readr::read_delim("barometre-resultats-synthese-national.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
@@ -23,25 +23,35 @@ synthese_national <- readr::read_delim("barometre-resultats-synthese-national.cs
 ```
 
 
-## premier test Noë
+## 1 jeune 1 solution
 
-```{r 1er test}
 
-UnJeuneAuvergne <- detail_regional |>
-  filter(mesure=="Plan 1 jeune 1 solution" & code_region==84) |>
-  mutate(valeur_mois = if_else(valeur>lag(valeur), valeur-lag(valeur), valeur, missing=valeur))|>
+```{r 1 jeune 1 solution National}
+
+UnJeuneNational <- detail_national |>
+  filter(mesure=="Plan 1 jeune 1 solution") |>
+  mutate(recrutés_par_mois = if_else(valeur>lag(valeur), valeur-lag(valeur), valeur, missing=valeur))|>
+  rename(recrutés_cumulés = valeur) |>
+  pivot_longer(c(recrutés_cumulés, recrutés_par_mois), names_to = "type", values_to = "valeur") |>
   mutate(year = year(date)) |>
   ggplot() + 
-  geom_point(mapping=aes(x=month(date), y=valeur_mois)) +
-  facet_wrap(vars(year), scales = "free")
+  geom_point(mapping=aes(x=date, y=valeur, fg=type)) +
+  labs(title = "Jeunes recrutés grâce au projet",
+       x = "Date",
+       y = "Nombre de recrutement")
 
-plotly::ggplotly(UnJeuneAuvergne)
+
+plotly::ggplotly(UnJeuneNational)
 
 
 ```
 
+diminution 2020
+augmentation 2021-2022
+Gros pic en septembre
 
-```{r 2nd test, fig.width=14}
+
+```{r 1 jeune 1 solution Regions, fig.width=14}
 
 UnJeuneNational <- detail_regional |>
   filter(mesure=="Plan 1 jeune 1 solution" & month(date)==7) |>
@@ -49,10 +59,51 @@ UnJeuneNational <- detail_regional |>
   ggplot() + 
   geom_col(mapping = aes(x=libelle_region, y=valeur, bg=libelle_region))+
   theme(axis.text.x=element_blank(),axis.ticks.x=element_blank(),axis.title.x=element_blank())+
-  facet_wrap(vars(year), nrow=1)
-
-UnJeuneNational
+  facet_wrap(vars(year), nrow=1)+
+  labs(title = "Jeunes recrutés grâce au projet par région",
+       x = "Date",
+       y = "Nombre de recrutement",
+       bg="Région")
 
 plotly::ggplotly(UnJeuneNational)
 
 ```
+
+IDF GOES BRRRRRRR
+
+```{r 1 jeune 1 solution region IdF}
+
+UnJeuneIdF <- detail_regional |>
+  filter(mesure=="Plan 1 jeune 1 solution" & code_region=="11") |>
+  mutate(valeur_mois = if_else(valeur>lag(valeur), valeur-lag(valeur), valeur, missing=valeur))|>
+  mutate(year = year(date)) |>
+  ggplot() + 
+  geom_point(mapping=aes(x=month(date), y=valeur_mois)) +
+  facet_wrap(vars(year), nrow=1)+
+  labs(title = "Jeunes recrutés grâce au projet en Île de France",
+       x = "Date",
+       y = "Nombre de recrutement")
+
+plotly::ggplotly(UnJeuneIdF)
+
+
+```
+
+```{r 1 jeune 1 solution départements IdF}
+
+UnJeuneDepIdF <- detail_departemental |>
+  filter(mesure=="Plan 1 jeune 1 solution" & code_departement=="01") |>
+  mutate(valeur_mois = if_else(valeur>lag(valeur), valeur-lag(valeur), valeur, missing=valeur))|>
+  mutate(year = year(date)) |>
+  ggplot() + 
+  geom_point(mapping=aes(x=month(date), y=valeur_mois)) +
+  facet_wrap(vars(year), nrow=1)
+
+plotly::ggplotly(UnJeuneDepIdF)
+
+
+```
+
+
+
+
