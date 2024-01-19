@@ -7,7 +7,9 @@ date: "2024-01-19"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+
 library(plotly)
+
 ```
 
 ## IMPORT des données
@@ -21,6 +23,7 @@ synthese_regional <- readr::read_delim("barometre-resultats-synthese-regional.cs
 synthese_national <- readr::read_delim("barometre-resultats-synthese-national.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
 
 ```
+
 
 
 ## 1 jeune 1 solution
@@ -107,3 +110,48 @@ plotly::ggplotly(UnJeuneDepIdF)
 
 
 
+
+Faire des Cartes :
+
+```{r}
+#import carte de la France
+
+mapdata <- map_data("france")
+#view(mapdata)
+
+#selection indicateurs
+ind1 <- filter(synth_departemental, mesure == "Réduire la mortalité sur les routes")
+
+#Join des deux tableaux
+mapdata1 <- left_join(mapdata, ind1, by = c("region" = "libelle_departement"))
+
+map1 <- ggplot(mapdata1, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_actuelle),color = "black")
+
+map2 <- map1 + scale_fill_gradient(name="nombre de morts",low="green",high="red",na.value="gray")
+
+map2
+plotly::ggplotly(map2)
+```
+
+```{r}
+mapdata3 <- map_data("france")
+
+reg_dep <- read_csv("/Users/mlauvernier/Desktop/departements-france.csv")
+
+#reg_dep
+
+mapReg <- left_join(mapdata2, reg_dep, by = c("region" = "nom_departement"))
+
+ind2 <- filter(synth_regional, mesure == "Réduire la mortalité sur les routes")
+
+regfin <- left_join(mapReg, ind2, by = c("nom_region" = "libelle_region"))
+
+regfin
+
+map5 <- ggplot(regfin, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_actuelle),color = "black")+ 
+  scale_fill_gradient(name="nombre de morts",low="green",high="red",na.value="gray")
+
+map5
+```

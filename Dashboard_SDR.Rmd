@@ -1,0 +1,83 @@
+---
+title: "Dashboard SDR"
+output: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library("tidyverse")
+library("plotly")
+library(shiny)
+detail_national = read_delim("barometre-resultats-detail-national.csv")
+indicateur <- detail_national |>
+          select(id_indicateur) |>
+          distinct() |>
+          arrange(id_indicateur)
+
+
+
+synthese_departemental <- readr::read_delim("barometre-resultats-synthese-departemental.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
+
+
+mapdata <- map_data("france")
+mapdata$region <- tolower(gsub(' ','-',mapdata$region))
+
+synthese_departemental$libelle_departement <- iconv(synthese_departemental$libelle_departement,to="ASCII//TRANSLIT")
+synthese_departemental$libelle_departement <- gsub("'","",synthese_departemental$libelle_departement)
+synthese_departemental$libelle_departement <- tolower(synthese_departemental$libelle_departement)
+synthese_departemental$libelle_departement <- tolower(gsub(' ','-',synthese_departemental$libelle_departement))
+
+
+```
+
+
+
+
+
+
+
+Column {.sidebar}
+--------------------------------------------------
+
+
+```{r}
+selectInput(
+  "indicateur1", label = "Indicateur",
+  choices = indicateur, selected = "taux-deploiement-fibre"
+)
+
+
+```
+
+
+Column
+--------------------------------------------------
+```{r}
+
+fluidRow(renderPlotly({
+  # create ggplot object
+  p <-
+    ggplot(
+      filter(detail_national, id_indicateur == input$indicateur1),
+      aes(x = date, y = valeur)
+    ) +
+    geom_line() +
+    geom_point()
+  
+  # wrap ggplot object with ggplotly
+  ggplotly(p)
+}),
+
+renderPlotly({
+
+map2 <- ggplot(left_join(mapdata, filter(synthese_departemental, id_indicateur == input$indicateur1), by = c("region" = "libelle_departement")), aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_actuelle),color = "black") + 
+  scale_fill_gradient(name="nombre de morts",low="green",high="red",na.value="gray")
+
+ggplotly(map2)
+}))
+
+```
+
+
+
