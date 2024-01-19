@@ -6,8 +6,8 @@ date: "2024-01-19"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-librairy(tidyverse)
-
+library(tidyverse)
+library(plotly)
 ```
 
 ## IMPORT des données
@@ -22,3 +22,37 @@ synthese_national <- readr::read_delim("barometre-resultats-synthese-national.cs
 
 ```
 
+
+## premier test Noë
+
+```{r 1er test}
+
+UnJeuneAuvergne <- detail_regional |>
+  filter(mesure=="Plan 1 jeune 1 solution" & code_region==84) |>
+  mutate(valeur_mois = if_else(valeur>lag(valeur), valeur-lag(valeur), valeur, missing=valeur))|>
+  mutate(year = year(date)) |>
+  ggplot() + 
+  geom_point(mapping=aes(x=month(date), y=valeur_mois)) +
+  facet_wrap(vars(year), scales = "free")
+
+plotly::ggplotly(UnJeuneAuvergne)
+
+
+```
+
+
+```{r 2nd test, fig.width=14}
+
+UnJeuneNational <- detail_regional |>
+  filter(mesure=="Plan 1 jeune 1 solution" & month(date)==7) |>
+  mutate(year = year(date)) |>
+  ggplot() + 
+  geom_col(mapping = aes(x=libelle_region, y=valeur, bg=libelle_region))+
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank(),axis.title.x=element_blank())+
+  facet_wrap(vars(year), nrow=1)
+
+UnJeuneNational
+
+plotly::ggplotly(UnJeuneNational)
+
+```
