@@ -36,6 +36,8 @@ ind1 <- filter(synth_departemental, mesure == "Réduire la mortalité sur les ro
 #Join des deux tableaux
 mapdata1 <- left_join(mapdata, ind1, by = c("region" = "libelle_departement"))
 
+map1 <- ggplot(mapdata1, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_actuelle),color = "black")
 
 map2 <- map1 + scale_fill_gradient(name="nombre de morts",low="green",high="red",na.value="gray")
 
