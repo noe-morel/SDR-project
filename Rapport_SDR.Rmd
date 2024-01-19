@@ -22,6 +22,22 @@ synthese_departemental <- readr::read_delim("barometre-resultats-synthese-depart
 synthese_regional <- readr::read_delim("barometre-resultats-synthese-regional.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
 synthese_national <- readr::read_delim("barometre-resultats-synthese-national.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
 
+reg_dep <- readr::read_delim("departements-france.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
+
+
+mapdata <- map_data("france")
+mapdata$region <- tolower(gsub(' ','-',mapdata$region))
+
+synthese_departemental$libelle_departement <- iconv(synthese_departemental$libelle_departement,to="ASCII//TRANSLIT")
+synthese_departemental$libelle_departement <- gsub("'","",synthese_departemental$libelle_departement)
+synthese_departemental$libelle_departement <- tolower(synthese_departemental$libelle_departement)
+synthese_departemental$libelle_departement <- tolower(gsub(' ','-',synthese_departemental$libelle_departement))
+
+detail_departemental$libelle_departement <- iconv(detail_departemental$libelle_departement,to="ASCII//TRANSLIT")
+detail_departemental$libelle_departement <- gsub("'","",detail_departemental$libelle_departement)
+detail_departemental$libelle_departement <- tolower(detail_departemental$libelle_departement)
+detail_departemental$libelle_departement <- tolower(gsub(' ','-',detail_departemental$libelle_departement))
+
 ```
 
 
@@ -95,15 +111,15 @@ plotly::ggplotly(UnJeuneIdF)
 ```{r 1 jeune 1 solution départements IdF}
 
 UnJeuneDepIdF <- detail_departemental |>
-  filter(mesure=="Plan 1 jeune 1 solution" & code_departement=="01") |>
+  left_join(reg_dep, by = c("code_departement"="code_departement"))|>
+  filter(mesure=="Plan 1 jeune 1 solution" & code_region=="11")|>
   mutate(valeur_mois = if_else(valeur>lag(valeur), valeur-lag(valeur), valeur, missing=valeur))|>
   mutate(year = year(date)) |>
   ggplot() + 
-  geom_point(mapping=aes(x=month(date), y=valeur_mois)) +
-  facet_wrap(vars(year), nrow=1)
+  geom_point(mapping=aes(x=month(date), y=valeur_mois))+
+  facet_grid(vars(nom_departement), vars(year), scales="fixed")
 
 plotly::ggplotly(UnJeuneDepIdF)
-
 
 ```
 
@@ -137,11 +153,10 @@ plotly::ggplotly(map2)
 ```{r}
 mapdata3 <- map_data("france")
 
-reg_dep <- read_csv("/Users/mlauvernier/Desktop/departements-france.csv")
 
 #reg_dep
 
-mapReg <- left_join(mapdata2, reg_dep, by = c("region" = "nom_departement"))
+mapReg <- left_join(mapdata3, reg_dep, by = c("region" = "nom_departement"))
 
 ind2 <- filter(synth_regional, mesure == "Réduire la mortalité sur les routes")
 
