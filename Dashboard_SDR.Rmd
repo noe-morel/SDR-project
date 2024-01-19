@@ -5,14 +5,16 @@ runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
-library("tidyverse")
-library("plotly")
+library(tidyverse)
+library(plotly)
 library(shiny)
 library(maps)
+library(glue)
+
 detail_national = read_delim("barometre-resultats-detail-national.csv")
 indicateur <- detail_national |>
-          select(id_indicateur) |>
-          distinct() |>
+          select(mesure,indicateur,id_indicateur,unite) |>
+          distinct(mesure,indicateur,id_indicateur,unite) |>
           arrange(id_indicateur)
 
 
@@ -29,6 +31,14 @@ synthese_departemental$libelle_departement <- tolower(synthese_departemental$lib
 synthese_departemental$libelle_departement <- tolower(gsub(' ','-',synthese_departemental$libelle_departement))
 
 
+addline_format <- function(x){
+  if(length(as.character(x))>20)
+    x <- gsub("^(.{20})(.*)$",      
+                       "\\1\n\\2",
+                       x)
+  returnValue(x)
+}
+
 ```
 
 
@@ -43,11 +53,9 @@ Column {.sidebar}
 
 ```{r}
 selectInput(
-  "indicateur1", label = "Indicateur",
-  choices = indicateur, selected = "taux-deploiement-fibre"
+  "indicateur", label = "Indicateur",
+  choices = indicateur$id_indicateur, selected = "taux-deploiement-fibre"
 )
-
-
 ```
 
 
@@ -59,24 +67,62 @@ fluidRow(renderPlotly({
   # create ggplot object
   p <-
     ggplot(
-      filter(detail_national, id_indicateur == input$indicateur1),
+      filter(detail_national, id_indicateur == input$indicateur),
       aes(x = date, y = valeur)
     ) +
     geom_line() +
-    geom_point()
+    geom_point() +
+    labs(title="Evolution au niveau national")
   
   # wrap ggplot object with ggplotly
   ggplotly(p)
 }),
-
+column(8,
 renderPlotly({
+  
+selected_indicator <- indicateur |>
+    filter(id_indicateur==input$indicateur)
 
-map2 <- ggplot(left_join(mapdata, filter(synthese_departemental, id_indicateur == input$indicateur1), by = c("region" = "libelle_departement")), aes(x=long, y=lat, group=group)) +
+
+map2 <- ggplot(left_join(mapdata, filter(synthese_departemental, id_indicateur == input$indicateur), by = c("region" = "libelle_departement")), aes(x=long, y=lat, group=group)) +
   geom_polygon(aes(fill=valeur_actuelle),color = "black") + 
-  scale_fill_gradient(name="nombre de morts",low="green",high="red",na.value="gray")
+  scale_fill_gradient(name=NULL,low="coral1",high="darkorchid4",na.value="gray") +
+  labs(title = "Synthèse départementale")
 
 ggplotly(map2)
-}))
+})),
+column(4,
+       renderText({
+       
+       glue(" 
+       Mesure : 
+       {as.character(
+         indicateur |>
+    filter(id_indicateur==input$indicateur) |>
+    select(mesure))}
+     ")
+         
+         
+         }),
+    
+           renderText({glue(" 
+       Indicateur : 
+       {as.character(
+         indicateur |>
+    filter(id_indicateur==input$indicateur) |>
+    select(indicateur))}
+     ")}),
+         
+
+               renderText({glue(" 
+       Unité : 
+       {as.character(
+         indicateur |>
+    filter(id_indicateur==input$indicateur) |>
+    select(unite))}
+    ")})
+             
+    ))
 
 ```
 
