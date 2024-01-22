@@ -47,7 +47,25 @@ mapdata$region <- tolower(mapdata$region)
 mapdata$region <- tolower(gsub(' ','-',mapdata$region))
 ```
 
-## 1 jeune 1 solution
+## Plan 1 jeune 1 solution
+
+Dans cette partie, nous allons nous concentrer sur la mise en place du plan 1 jeune 1 solution mis en place à partir de l'été 2020.
+
+Ce plan gouvernemental a pour objectif d'améliorer l'insertion des jeunes dans la vie professionnelle. Pour atteindre cet objectif, le plan se concentre sur 3 axes :
+
+-Faciliter l'entrée dans la vie professionnelle avec des aides pour les employeurs qui recrutent des jeunes, des aides plus importantes sont aussi disponibles pour les contrats d'apprentissages. A cela s'ajoute la création de mission de service civique rémunérée et de métiers dans le secteur du sport.
+
+-Orienter et former les jeunes, à l'aide de parcours de formations qualifiants et professionnalisants ndefinedndefineddans de no
+
+-Proposer un accompagnement plus personnalisé pour les jeunes en difficultés.
+
+Pour mesurer l'impact des mesures mises en place, notre base de données à choisi comme indicateur le nombre de jeune recrutés. Ainsi, pour chaque mois depuis août 2019, on a accès au nombre de jeune recrutés depuis le dernier mois d'août.
+
+Afin d'étudier l'impact de ce plan à différentes échelles, nous allons effectuer un zoom progressif aux différentes échelles disponibles afin d'interpréter ces nombres.
+
+Pour la première étape, nous allons étudier les chiffres à l'échelle nationale. Pour cela nous allons tracer le nombre de jeune recruter depuis le mois d'août dernier pour chaque mois depuis août 2019 à fin 2022 (information donnée par la base de données), mais aussi le nombre de jeunes recrutés par mois, afin de pouvoir suivre une progression continue.
+
+Afin d'obtenir le nombre de recruter par mois, nous avons crée une nouvelle colonne qui prends pour valeur la différence du nombre de personne recruter depuis août pour un mois et qui fait la différence avec la valeur du mois précédent.
 
 ```{r 1 jeune 1 solution National}
 
@@ -58,10 +76,11 @@ UnJeuneNational <- detail_national |>
   pivot_longer(c(recrutés_cumulés, recrutés_par_mois), names_to = "type", values_to = "valeur") |>
   mutate(year = year(date)) |>
   ggplot() + 
-  geom_point(mapping=aes(x=date, y=valeur, fg=type)) +
+  geom_line(mapping=aes(x=date, y=valeur, fg=type)) +
   labs(title = "Jeunes recrutés grâce au projet",
        x = "Date",
-       y = "Nombre de recrutement")
+       y = "Nombre de recrutement",
+       fg="")
 
 
 plotly::ggplotly(UnJeuneNational)
@@ -69,7 +88,11 @@ plotly::ggplotly(UnJeuneNational)
 
 ```
 
-diminution 2020 augmentation 2021-2022 Gros pic en septembre
+Tout d'abord, on peut très rapidement repérer une saisonnalitée importante grâce à la courbe de recrutement par mois. En effet, chaque année, le nombre de jeune recruté pendant le mois de septembre est très important par rapport au reste de l'année. Cette période de fort recrutement des jeunes peut sans doute être expliquer par le fait que le début d'année pour les jeunes et en septembre, ainsi de nombreux contrats d'apprentissages doivent commencer en septembre.
+
+Ensuite, en regardant les pics de chaque année (donc le mois de juillet de chaque année), on peut remarquer une baisse du recrutement des jeunes en 2020. Cette chute est surement due à la crise COVID. Cette interprétation est corroborée par la chute observée autour d'avril 2020, le début de la crise COVID.
+
+Après la grosse chute de recrutement mensuel causé par la crise, on observe une forte augmentation du recrutement à l'été 2020, cela coïncide avec le début du plan 1 jeune 1 solution. Il est donc raisonnable de supposer que ce plan à permis de neutralisé l'impact de la crise sur le recrutement des jeunes. Ainsi on observe une remontée du nombre de recrutement pour 2021 au niveau de celui de 2019. L'augmentation continue ensuite pour 2022.
 
 ```{r 1 jeune 1 solution Regions, fig.width=14}
 
@@ -98,8 +121,7 @@ UnJeuneIdF <- detail_regional |>
   mutate(valeur_mois = if_else(valeur>lag(valeur), valeur-lag(valeur), valeur, missing=valeur))|>
   mutate(year = year(date)) |>
   ggplot() + 
-  geom_point(mapping=aes(x=month(date), y=valeur_mois)) +
-  facet_wrap(vars(year), nrow=1)+
+  geom_line(mapping=aes(x=date, y=valeur_mois)) +
   labs(title = "Jeunes recrutés grâce au projet en Île de France",
        x = "Date",
        y = "Nombre de recrutement")
@@ -111,14 +133,26 @@ plotly::ggplotly(UnJeuneIdF)
 
 ```{r 1 jeune 1 solution départements IdF}
 
+test <- detail_departemental |>
+  filter(month(date)==7 & mesure=="Plan 1 jeune 1 solution")|>
+  mutate(year = year(date))|>
+  group_by(year)|>
+  mutate(moyenne = mean(valeur))
+
 UnJeuneDepIdF <- detail_departemental |>
   left_join(reg_dep, by = c("code_departement"="code_departement"))|>
-  filter(mesure=="Plan 1 jeune 1 solution" & code_region=="11")|>
-  mutate(valeur_mois = if_else(valeur>lag(valeur), valeur-lag(valeur), valeur, missing=valeur))|>
+  filter(mesure=="Plan 1 jeune 1 solution" & month(date)==7)|>
+  add_column(moyenne = test$moyenne) |>
+  filter(code_region=="11")|>
   mutate(year = year(date)) |>
   ggplot() + 
-  geom_point(mapping=aes(x=month(date), y=valeur_mois))+
-  facet_grid(vars(nom_departement), vars(year), scales="fixed")
+  geom_line(mapping=aes(x=year(date), y=valeur, fg = libelle_departement))+
+  geom_line(mapping = aes(x = year(date), y=moyenne))  +
+  labs(title = "Jeunes recrutés grâce au projet en Île de France par département",
+       x = "Date",
+       y = "Nombre de recrutement",
+       fg="Département")
+
 
 plotly::ggplotly(UnJeuneDepIdF)
 
