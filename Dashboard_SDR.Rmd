@@ -31,15 +31,6 @@ synthese_departemental$libelle_departement <- gsub("'","",synthese_departemental
 synthese_departemental$libelle_departement <- tolower(synthese_departemental$libelle_departement)
 synthese_departemental$libelle_departement <- tolower(gsub(' ','-',synthese_departemental$libelle_departement))
 
-
-addline_format <- function(x){
-  if(length(as.character(x))>20)
-    x <- gsub("^(.{20})(.*)$",      
-                       "\\1\n\\2",
-                       x)
-  returnValue(x)
-}
-
 ```
 
 
