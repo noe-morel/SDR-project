@@ -10,6 +10,7 @@ library(plotly)
 library(shiny)
 library(maps)
 library(glue)
+library(colourpicker)
 
 detail_national = read_delim("barometre-resultats-detail-national.csv")
 indicateur <- detail_national |>
@@ -55,7 +56,13 @@ Column {.sidebar}
 selectInput(
   "indicateur", label = "Indicateur",
   choices = indicateur$id_indicateur, selected = "taux-deploiement-fibre"
+
 )
+
+  colourInput("colH", label ="Couleur pour les fortes valeurs", "darkorchid4")
+  
+  colourInput("colL", label ="Couleur pour les faibles valeurs", "coral1")
+
 ```
 
 
@@ -86,7 +93,7 @@ selected_indicator <- indicateur |>
 
 map2 <- ggplot(left_join(mapdata, filter(synthese_departemental, id_indicateur == input$indicateur), by = c("region" = "libelle_departement")), aes(x=long, y=lat, group=group)) +
   geom_polygon(aes(fill=valeur_actuelle),color = "black") + 
-  scale_fill_gradient(name=NULL,low="coral1",high="darkorchid4",na.value="gray") +
+  scale_fill_gradient(name=NULL,low=input$colL,high=input$colH,na.value="gray") +
   labs(title = "Synthèse départementale")
 
 ggplotly(map2)
