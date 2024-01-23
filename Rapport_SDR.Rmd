@@ -75,7 +75,7 @@ Ce plan gouvernemental a pour objectif d'améliorer l'insertion des jeunes dans 
 
 -Faciliter l'entrée dans la vie professionnelle avec des aides pour les employeurs qui recrutent des jeunes, des aides plus importantes sont aussi disponibles pour les contrats d'apprentissages. A cela s'ajoute la création de mission de service civique rémunérée et de métiers dans le secteur du sport.
 
--Orienter et former les jeunes, à l'aide de parcours de formations qualifiants et professionnalisants ndefinedndefineddans de no
+-Orienter et former les jeunes, à l'aide de parcours de formations qualifiants et professionnalisants.
 
 -Proposer un accompagnement plus personnalisé pour les jeunes en difficultés.
 
@@ -85,7 +85,7 @@ Afin d'étudier l'impact de ce plan à différentes échelles, nous allons effec
 
 Pour la première étape, nous allons étudier les chiffres à l'échelle nationale. Pour cela nous allons tracer le nombre de jeune recruter depuis le mois d'août dernier pour chaque mois depuis août 2019 à fin 2022 (information donnée par la base de données), mais aussi le nombre de jeunes recrutés par mois, afin de pouvoir suivre une progression continue.
 
-Afin d'obtenir le nombre de recruter par mois, nous avons crée une nouvelle colonne qui prends pour valeur la différence du nombre de personne recruter depuis août pour un mois et qui fait la différence avec la valeur du mois précédent.
+Afin d'obtenir le nombre de recruter par mois, nous avons créé une nouvelle colonne qui prends pour valeur la différence du nombre de personne recruter depuis août pour un mois et qui fait la différence avec la valeur du mois précédent.
 
 ```{r 1 jeune 1 solution National}
 
@@ -108,11 +108,15 @@ plotly::ggplotly(UnJeuneNational)
 
 ```
 
-Tout d'abord, on peut très rapidement repérer une saisonnalitée importante grâce à la courbe de recrutement par mois. En effet, chaque année, le nombre de jeune recruté pendant le mois de septembre est très important par rapport au reste de l'année. Cette période de fort recrutement des jeunes peut sans doute être expliquer par le fait que le début d'année pour les jeunes et en septembre, ainsi de nombreux contrats d'apprentissages doivent commencer en septembre.
+Tout d'abord, on peut très rapidement repérer une saisonnalité importante grâce à la courbe de recrutement par mois. En effet, chaque année, le nombre de jeune recruté pendant le mois de septembre est très important par rapport au reste de l'année. Cette période de fort recrutement des jeunes peut sans doute être expliquer par le fait que le début d'année pour les jeunes et en septembre, ainsi de nombreux contrats d'apprentissages doivent commencer en septembre.
 
 Ensuite, en regardant les pics de chaque année (donc le mois de juillet de chaque année), on peut remarquer une baisse du recrutement des jeunes en 2020. Cette chute est surement due à la crise COVID. Cette interprétation est corroborée par la chute observée autour d'avril 2020, le début de la crise COVID.
 
-Après la grosse chute de recrutement mensuel causé par la crise, on observe une forte augmentation du recrutement à l'été 2020, cela coïncide avec le début du plan 1 jeune 1 solution. Il est donc raisonnable de supposer que ce plan à permis de neutralisé l'impact de la crise sur le recrutement des jeunes. Ainsi on observe une remontée du nombre de recrutement pour 2021 au niveau de celui de 2019. L'augmentation continue ensuite pour 2022.
+Après la grosse chute de recrutement mensuel causé par la crise, on observe une forte augmentation du recrutement à l'été 2020, cela coïncide avec le début du plan 1 jeune 1 solution. Il est donc raisonnable de supposer que ce plan à permis de neutralisé l'impact de la crise sur le recrutement des jeunes. Ainsi on observe une remontée du nombre de recrutement pour 2021 au niveau de celui de 2019.
+
+L'augmentation continue ensuite pour 2022. On peut donc supposer qu'à l'échelle nationale, le plan a eu des conséquences positives sur le recrutement des jeunes.
+
+Regardons maintenant à l'échelle régionale, pour chaque année, pour voir si l'on retrouve la même progression annuelle.
 
 ```{r 1 jeune 1 solution Regions, fig.width=14}
 
@@ -132,24 +136,62 @@ plotly::ggplotly(UnJeuneNational)
 
 ```
 
-IDF GOES BRRRRRRR
+Tout d'abord on peut remarquer que l'Île de France est une très grande région recruteuse de jeunes, mais c'est aussi la région la plus peuplée de France, ces chiffres sont donc à relativiser. Ensuite, pour chaque région on peut retrouver une chute du recrutement pour l'année 2021, comme pour la tendance nationale. On peut remarquer aussi que le nombre de jeune recruté à Mayotte est de 0 (et pas NA). Cependant il est très peu probable qu'aucun jeune ait trouvé un emploi à la réunion à Mayotte pendant 4 année de suite, cette information est donc sans doute manquante.
+
+En raison des fortes disparités de population en fonction de la région, ce graphe ne nous permet pas de faire des observations précises. Ainsi pour offrir un autre point de vue, nous avons décidé de représenter le pourcentage d'évolution du recrutement entre chaque année, en enlevant Mayotte qui ne présente donc pas d'informations.
+
+```{r 1 jeune 1 solution Regions, fig.width=14}
+
+UnJeuneNationalPC <- detail_regional |>
+  filter(mesure=="Plan 1 jeune 1 solution" & month(date)==7 & code_region!="06") |>
+  mutate(year = year(date)) |>
+  mutate(valeur_pc = if_else(year!=2019, 100+(valeur-lag(valeur))/lag(valeur)*100, 100))|>
+  ggplot() + 
+  geom_col(mapping = aes(x=libelle_region, y=valeur_pc, bg=libelle_region))+
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank(),axis.title.x=element_blank())+
+  facet_wrap(vars(year), nrow=1)+
+  labs(title = "Jeunes recrutés grâce au projet par région",
+       x = "Date",
+       y = "Nombre de recrutement",
+       bg="Région")
+
+plotly::ggplotly(UnJeuneNationalPC)
+```
+
+Sur ce graphe, on a donc toutes les régions à 100 en 2019 (nous n'avons pas les chiffres de juillet 2018, donc on ne peut pas les comparer à ceux de juillet 2019). Pour les années suivantes, on peut observer l'évolution du recrutement par rapport à l'année précédente par région.
+
+Comme on le savait déjà, toutes les régions ont subi une baisse du recrutement en 2020, cette baisse est d'autant plus marquée pour les régions Corse, Guyane, Martinique et Provence-Alpes-Côte-d'Azur. Ces régions sont des régions très dépendantes du tourisme, surtout en période estivale. Elles ont donc été fortement impactées par le confinement d'Avril-Mai 2020, ce qui a sans doute causé ces chutes importantes.
+
+De plus, en 2021, les régions qui ont vu leur recrutement le plus progresser sont de même les régions d'Outre-Mer et la Corse. On peut donc supposer que ce même facteur du tourisme, ayant repris à pleine intensité en 2021 soit la cause de cette augmentation. A l'inverse, la région Île-de-France est la seule n'ayant pas progresser durant cette année.
+
+Pour 2022, les chiffres des régions des départements d'Outre-Mer sont moins importants, même s'ils continuent d'augmenter malgré leur très forte augmentation l'année précédente. Sur la même période, toutes les régions de la métropole voient leur chiffre augmenté, avec des valeurs proches sur tout le territoire, avec des chiffres plus importants pour la région Auvergne-Rhône-Alpes, l'Île-de-France et la région PACA.
+
+Pour continuer l'analyse à un niveau départementale, nous avons décidé de nous concentrer sur la région PACA qui présente beaucoup de variations et des chiffres importants. Nous allons donc tracer la valeur mensuelle du recrutement en région PACA.
 
 ```{r 1 jeune 1 solution region IdF}
 
-UnJeuneIdF <- detail_regional |>
-  filter(mesure=="Plan 1 jeune 1 solution" & code_region=="11") |>
+UnJeunePACA <- detail_regional |>
+  filter(mesure=="Plan 1 jeune 1 solution" & code_region=="93") |>
   mutate(valeur_mois = if_else(valeur>lag(valeur), valeur-lag(valeur), valeur, missing=valeur))|>
   mutate(year = year(date)) |>
   ggplot() + 
   geom_line(mapping=aes(x=date, y=valeur_mois)) +
-  labs(title = "Jeunes recrutés grâce au projet en Île de France",
+  labs(title = "Jeunes recrutés grâce au projet en région PACA",
        x = "Date",
        y = "Nombre de recrutement")
 
-plotly::ggplotly(UnJeuneIdF)
+plotly::ggplotly(UnJeunePACA)
 
 
 ```
+
+Tout d'abord, nous pouvons remarquer une différence avec l'évolution nationale. Pour la progression nationale, les chiffres de recrutement sont a peu prêt constant sur la période décembre-juin, alors que pour la région PACA, on observe une première augmentation du recrutement dès le mois d'avril. Cela est sans doute dû à l'activité saisonnière de la région. La crise du COVID à donc fortement impacté la région, le nombre de recrutement en avril ayant été extremement bas par rapport à la normale.
+
+Même si l'on pourrait croire que le pic de septembre 2020 n'a pas été beaucoup impacté par la crise car il ne présente pas d'évolution significative, on peut remarquer que les autres pics sont tous alignés et suivent donc une tendance claire que celui de 2020 ne suit pas.
+
+Cette dernière observation nous pousse d'ailleurs à nous demander si le plan d'action du gouvernement à réellement un impact sur le recrutement des jeunes. En effet si les chiffres du recrutement semblent suivre la même évolution avant et après 2021, on peut se demander si le plan réellement une utilité, même s'il a peut-être aider à la reprise de l'activité.
+
+Pour finir cette analyse, nous allons regarder l'évolution du nombre de recrutement par an par département, toujours dans la région PACA. Pour offrir un outil de comparaison, nous affichons en même temps en noir la courbe d'évolution nationale.
 
 ```{r 1 jeune 1 solution départements IdF}
 
@@ -159,24 +201,30 @@ test <- detail_departemental |>
   group_by(year)|>
   mutate(moyenne = mean(valeur))
 
-UnJeuneDepIdF <- detail_departemental |>
+UnJeuneDepPACA <- detail_departemental |>
   left_join(reg_dep, by = c("code_departement"="code_departement"))|>
   filter(mesure=="Plan 1 jeune 1 solution" & month(date)==7)|>
   add_column(moyenne = test$moyenne) |>
-  filter(code_region=="11")|>
+  filter(code_region=="93")|>
   mutate(year = year(date)) |>
   ggplot() + 
   geom_line(mapping=aes(x=year(date), y=valeur, fg = libelle_departement))+
   geom_line(mapping = aes(x = year(date), y=moyenne))  +
-  labs(title = "Jeunes recrutés grâce au projet en Île de France par département",
+  labs(title = "Jeunes recrutés grâce au projet en PACA par département",
        x = "Date",
        y = "Nombre de recrutement",
        fg="Département")
 
 
-plotly::ggplotly(UnJeuneDepIdF)
+plotly::ggplotly(UnJeuneDepPACA)
 
 ```
+
+Tout d'abord, on peut voir que 2 départements, les Hautes-Alpes et les Alpes-de-Haute-Provence se démarquent par leur faible recrutement de jeunes. Ces mêmes départements présentent une très faible évolution de leur nombre de recrutement.
+
+L'évolution des recrutements du Vaucluse est très proche de l'évolution nationale, même si pour des chiffres moins importants. Cette évolution nationale présente évidement une chute en 2020, et une progression sur 4 ans de 25%.
+
+Les 3 autres départements présentent de plus grandes variations, avec une chute du recrutement plus importante que la moyenne en 2020, mais des augmentations pour 2021 et 2022 plus importantes avec un gain entre 2019 et 2022 autours des 33%. Cette progression est d'autant plus marquée pour le département des Bouches-du-Rhône. On peut donc supposer que ce sont principalement ces 3 département qui dépendent du tourisme dans la région.
 
 Faire des Cartes :
 
