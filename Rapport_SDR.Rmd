@@ -180,9 +180,13 @@ plotly::ggplotly(UnJeuneDepIdF)
 
 Faire des Cartes :
 
+introduction carte : 100 mots
+
 ```{r}
 mapReg <- left_join(mapdata, reg_dep, by = c("region" = "nom_departement"))
 ```
+
+méthode 50 mots
 
 ```{r}
 #selection indicateurs
@@ -198,6 +202,8 @@ mapD_now_dep <- ggplot(mapdataD_now_dep, aes(x=long, y=lat, group=group)) +
 plotly::ggplotly(mapD_now_dep)
 ```
 
+résultats 100 mots
+
 ```{r}
 mapD_for_dep <- ggplot(mapdataD_now_dep, aes(x=long, y=lat, group=group)) +
   geom_polygon(aes(fill=valeur_initiale),color = "black") + scale_fill_gradient(name="nombre de morts",low="green",high="red",na.value="gray")+
@@ -205,6 +211,8 @@ mapD_for_dep <- ggplot(mapdataD_now_dep, aes(x=long, y=lat, group=group)) +
 
 plotly::ggplotly(mapD_for_dep)
 ```
+
+résultats 100 mots
 
 ```{r}
 indD_reg <- filter(synthese_regional, mesure == "Réduire la mortalité sur les routes")
@@ -218,3 +226,148 @@ mapD_now_reg <- ggplot(regD, aes(x=long, y=lat, group=group)) +
 
 plotly::ggplotly(mapD_now_reg)
 ```
+
+méthodes et résultats 200 mots
+
+```{r}
+mapD_for_reg <- ggplot(regD, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_initiale),color = "black")+ 
+  scale_fill_gradient(name="nombre de morts",low="green",high="red",na.value="gray")+
+  labs(title = "Mortalité sur les routes en 2022, par région ")
+
+plotly::ggplotly(mapD_for_reg)
+```
+
+résultats 100 mots
+
+```{r}
+indCYC_now_dep <- filter(synthese_departemental, indicateur == "Kilomètres d'aménagements cyclables sécurisés")
+
+#Join des deux tableaux
+mapdataCYC_now_dep <- left_join(mapdata, indCYC_now_dep, by = c("region" = "libelle_departement"))
+
+mapCYC_now_dep <- ggplot(mapdataCYC_now_dep, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_actuelle),color = "black")+ 
+  scale_fill_gradient(name="kilomètres",low="brown",high="chartreuse",na.value="gray")+
+  labs(title = "Km d'aménagement cyclables sécurisés en 2022, par département ")
+
+#mapSDF_now_dep
+plotly::ggplotly(mapCYC_now_dep)
+
+mapCYC_for_dep <- ggplot(mapdataCYC_now_dep, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_initiale),color = "black")+ 
+  scale_fill_gradient(name="kilomètres",low="brown",high="chartreuse",na.value="gray")+
+  labs(title = "Km d'aménagement cyclables sécurisés en 2017, par département")
+
+plotly::ggplotly(mapCYC_for_dep)
+```
+
+interpretation 200 mots
+
+```{r}
+indCYC_now_reg <- filter(synthese_regional, indicateur == "Kilomètres d'aménagements cyclables sécurisés")
+
+regCYC_now_reg <- left_join(mapReg, indCYC_now_reg, by = c("nom_region" = "libelle_region"))
+
+mapCYC_now_reg <- ggplot(regCYC_now_reg, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_actuelle),color = "black")+ 
+  scale_fill_gradient(name="kilomètre",low="brown",high="chartreuse",na.value="gray")+
+  labs(title = "Km d'aménagement cyclables sécurisés en 2022, par région")
+
+plotly::ggplotly(mapCYC_now_reg)
+
+mapCYC_for_reg <- ggplot(regCYC_now_reg, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_initiale),color = "black")+ 
+  scale_fill_gradient(name="kilomètres",low="brown",high="chartreuse",na.value="gray")+
+  labs(title = "Km d'aménagement cyclables sécurisés en 2017, par région")
+
+plotly::ggplotly(mapCYC_for_reg)
+```
+
+interpretation 200 mots
+
+```{r}
+indELEC_now_dep <- filter(synthese_departemental, indicateur == "Nombre de bornes de recharge pour véhicules électriques déployées")
+
+#Join des deux tableaux
+mapdataELEC_now_dep <- left_join(mapdata, indELEC_now_dep, by = c("region" = "libelle_departement"))
+
+mapELEC_now_dep <- ggplot(mapdataELEC_now_dep, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_actuelle),color = "black")+ 
+  scale_fill_gradient(name="bornes de recharge",low="darkorange1",high="blue",na.value="gray")+
+  labs(title = "Bornes de recharge électriques déployées en 2022, par département ")
+
+#mapSDF_now_dep
+plotly::ggplotly(mapELEC_now_dep)
+
+mapELEC_for_dep <- ggplot(mapdataELEC_now_dep, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_initiale),color = "black")+ 
+  scale_fill_gradient(name="bornes de recharge",low="darkorange1",high="blue",na.value="gray")+
+  labs(title = "Bornes de recharge électriques déployées en 2019, par département")
+
+plotly::ggplotly(mapELEC_for_dep)
+
+indELEC_now_reg <- filter(synthese_regional, indicateur == "Nombre de bornes de recharge pour véhicules électriques déployées")
+
+
+regELEC_now_reg <- left_join(mapReg, indELEC_now_reg, by = c("nom_region" = "libelle_region"))
+
+mapELEC_now_reg <- ggplot(regELEC_now_reg, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_actuelle),color = "black")+ 
+  scale_fill_gradient(name="bornes de recharge",low="darkorange1",high="blue",na.value="gray")+
+  labs(title = "Bornes de recharge électriques déployées en 2022, par région")
+
+plotly::ggplotly(mapELEC_now_reg)
+
+mapELEC_for_reg <- ggplot(regELEC_now_reg, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_initiale),color = "black")+ 
+  scale_fill_gradient(name="bornes de recharge",low="darkorange1",high="blue",na.value="gray")+
+  labs(title = "Bornes de recharge électriques déployées en 2019, par région")
+
+plotly::ggplotly(mapELEC_for_reg)
+
+```
+
+interpretation 300 mots
+
+```{r}
+indSDF_now_dep <- filter(synthese_departemental, indicateur == "Nombre de personnes sans-abri ou en hébergement ayant obtenu un logement social")
+
+#Join des deux tableaux
+mapdataSDF_now_dep <- left_join(mapdata, indSDF_now_dep, by = c("region" = "libelle_departement"))
+
+mapSDF_now_dep <- ggplot(mapdataSDF_now_dep, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_actuelle),color = "black")+ 
+  scale_fill_gradient(name="personnes dans l'année",low="cadetblue1",high="brown2",na.value="gray")+
+  labs(title = "Sans-abri obtenant un logement social en 2022, par département")
+
+#mapSDF_now_dep
+plotly::ggplotly(mapSDF_now_dep)
+
+mapSDF_for_dep <- ggplot(mapdataSDF_now_dep, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_initiale),color = "black")+ 
+  scale_fill_gradient(name="personnes dans l'année",low="cadetblue1",high="brown2",na.value="gray")+
+  labs(title = "Sans-abri obtenant un logement social en 2021, par département")
+
+plotly::ggplotly(mapSDF_for_dep)
+
+indSDF_now_reg <- filter(synthese_regional, indicateur == "Nombre de personnes sans-abri ou en hébergement ayant obtenu un logement social")
+
+
+regSDF_now_reg <- left_join(mapReg, indSDF_now_reg, by = c("nom_region" = "libelle_region"))
+
+mapSDF_now_reg <- ggplot(regSDF_now_reg, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_actuelle),color = "black")+ 
+  scale_fill_gradient(name="personnes dans l'année",low="cadetblue1",high="brown2",na.value="gray")+
+  labs(title = "Sans-abri obtenant un logement social en 2022, par région")
+
+plotly::ggplotly(mapSDF_now_reg)
+
+mapSDF_for_reg <- ggplot(regSDF_now_reg, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_initiale),color = "black")+ 
+  scale_fill_gradient(name="personnes dans l'année",low="cadetblue1",high="brown2",na.value="gray")+labs(title = "Sans-abri obtenant un logement social en 2021, par région")
+
+plotly::ggplotly(mapSDF_for_reg)
+```
+
+interpretation 300 mots

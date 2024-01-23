@@ -26,22 +26,17 @@ synthese_departemental <- readr::read_delim("barometre-resultats-synthese-depart
 mapdata <- map_data("france")
 mapdata$region <- tolower(gsub(' ','-',mapdata$region))
 
+synthese_departemental$libelle_departement <- gsub("ô","o",synthese_departemental$libelle_departement)
+
 synthese_departemental$libelle_departement <- iconv(synthese_departemental$libelle_departement,to="ASCII//TRANSLIT")
 synthese_departemental$libelle_departement <- gsub("'","",synthese_departemental$libelle_departement)
 synthese_departemental$libelle_departement <- tolower(synthese_departemental$libelle_departement)
+synthese_departemental$libelle_departement <- gsub("`","",synthese_departemental$libelle_departement)
 synthese_departemental$libelle_departement <- tolower(gsub(' ','-',synthese_departemental$libelle_departement))
 
 ```
 
-
-
-
-
-
-
-Column {.sidebar}
---------------------------------------------------
-
+## Column {.sidebar}
 
 ```{r}
 selectInput(
@@ -56,9 +51,8 @@ selectInput(
 
 ```
 
+## Column
 
-Column
---------------------------------------------------
 ```{r}
 
 fluidRow(renderPlotly({
@@ -123,6 +117,3 @@ column(4,
     ))
 
 ```
-
-
-
