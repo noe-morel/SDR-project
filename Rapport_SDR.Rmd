@@ -24,12 +24,33 @@ synthese_national <- readr::read_delim("barometre-resultats-synthese-national.cs
 
 reg_dep <- readr::read_delim("departements-france.csv", delim = ",", trim_ws = TRUE, show_col_types = FALSE)
 
+reg_dep$nom_departement <- gsub("ô","o",reg_dep$nom_departement)
+
+
+reg_dep$nom_departement <- iconv(reg_dep$nom_departement,to="ASCII//TRANSLIT")
+reg_dep$nom_departement <- gsub("'","",reg_dep$nom_departement)
+reg_dep$nom_departement <- gsub("`","",reg_dep$nom_departement)
+reg_dep$nom_departement <- tolower(reg_dep$nom_departement)
+reg_dep$nom_departement <- tolower(gsub(' ','-',reg_dep$nom_departement))
+
+reg_dep$nom_region <- gsub("ô","o",reg_dep$nom_region)
+
+
+reg_dep$nom_region <- iconv(reg_dep$nom_region,to="ASCII//TRANSLIT")
+reg_dep$nom_region <- gsub("'","",reg_dep$nom_region)
+reg_dep$nom_region <- gsub("`","",reg_dep$nom_region)
+reg_dep$nom_region <- tolower(reg_dep$nom_region)
+reg_dep$nom_region <- tolower(gsub(' ','-',reg_dep$nom_region))
+
 
 mapdata <- map_data("france")
 mapdata$region <- tolower(gsub(' ','-',mapdata$region))
 
+synthese_departemental$libelle_departement <- gsub("ô","o",synthese_departemental$libelle_departement)
+
 synthese_departemental$libelle_departement <- iconv(synthese_departemental$libelle_departement,to="ASCII//TRANSLIT")
 synthese_departemental$libelle_departement <- gsub("'","",synthese_departemental$libelle_departement)
+synthese_departemental$libelle_departement <- gsub("`","",synthese_departemental$libelle_departement)
 synthese_departemental$libelle_departement <- tolower(synthese_departemental$libelle_departement)
 synthese_departemental$libelle_departement <- tolower(gsub(' ','-',synthese_departemental$libelle_departement))
 
@@ -38,13 +59,12 @@ detail_departemental$libelle_departement <- gsub("'","",detail_departemental$lib
 detail_departemental$libelle_departement <- tolower(detail_departemental$libelle_departement)
 detail_departemental$libelle_departement <- tolower(gsub(' ','-',detail_departemental$libelle_departement))
 
-
-mapdata <- map_data("france")
-
-mapdata$region <- iconv(mapdata$region,to="ASCII//TRANSLIT")
-mapdata$region <- gsub("'","",mapdata$region)
-mapdata$region <- tolower(mapdata$region)
-mapdata$region <- tolower(gsub(' ','-',mapdata$region))
+synthese_regional$libelle_region <- gsub("ô","o",synthese_regional$libelle_region)
+synthese_regional$libelle_region <- iconv(synthese_regional$libelle_region,to="ASCII//TRANSLIT")
+synthese_regional$libelle_region <- gsub("'","",synthese_regional$libelle_region)
+synthese_regional$libelle_region <- gsub("`","",synthese_regional$libelle_region)
+synthese_regional$libelle_region <- tolower(synthese_regional$libelle_region)
+synthese_regional$libelle_region <- tolower(gsub(' ','-',synthese_regional$libelle_region))
 ```
 
 ## Plan 1 jeune 1 solution
@@ -161,82 +181,40 @@ plotly::ggplotly(UnJeuneDepIdF)
 Faire des Cartes :
 
 ```{r}
-#import carte de la France
+mapReg <- left_join(mapdata, reg_dep, by = c("region" = "nom_departement"))
+```
 
-
-#view(mapdata)
-
+```{r}
 #selection indicateurs
-ind1 <- filter(synthese_departemental, mesure == "Réduire la mortalité sur les routes")
+indD_now_dep <- filter(synthese_departemental, mesure == "Réduire la mortalité sur les routes")
 
 #Join des deux tableaux
-mapdata1 <- left_join(mapdata, ind1, by = c("region" = "libelle_departement"))
+mapdataD_now_dep <- left_join(mapdata, indD_now_dep, by = c("region" = "libelle_departement"))
 
-map1 <- ggplot(mapdata1, aes(x=long, y=lat, group=group)) +
-  geom_polygon(aes(fill=valeur_actuelle),color = "black")
+mapD_now_dep <- ggplot(mapdataD_now_dep, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_actuelle),color = "black") + scale_fill_gradient(name="nombre de morts",low="green",high="red",na.value="gray")+
+  labs(title = "Mortalité sur les routes en 2022, par département ")
 
-map2 <- map1 + scale_fill_gradient(name="nombre de morts",low="green",high="red",na.value="gray")
-
-map2
-plotly::ggplotly(map2)
+plotly::ggplotly(mapD_now_dep)
 ```
 
 ```{r}
-#mapdata3 <- map_data("france")
+mapD_for_dep <- ggplot(mapdataD_now_dep, aes(x=long, y=lat, group=group)) +
+  geom_polygon(aes(fill=valeur_initiale),color = "black") + scale_fill_gradient(name="nombre de morts",low="green",high="red",na.value="gray")+
+  labs(title = "Mortalité sur les routes en 2017, par département ")
 
-
-#reg_dep
-
-mapReg <- left_join(mapdata3, reg_dep, by = c("region" = "nom_departement"))
-
-ind2 <- filter(synthese_regional, mesure == "Réduire la mortalité sur les routes")
-
-regfin <- left_join(mapReg, ind2, by = c("nom_region" = "libelle_region"))
-
-regfin
-
-map5 <- ggplot(regfin, aes(x=long, y=lat, group=group)) +
-  geom_polygon(aes(fill=valeur_actuelle),color = "black")+ 
-  scale_fill_gradient(name="nombre de morts",low="green",high="red",na.value="gray")
-
-map5
+plotly::ggplotly(mapD_for_dep)
 ```
 
 ```{r}
+indD_reg <- filter(synthese_regional, mesure == "Réduire la mortalité sur les routes")
 
-indSDF_now_dep <- filter(synthese_departemental, indicateur == "Nombre de personnes sans-abri ou en hébergement ayant obtenu un logement social")
+regD <- left_join(mapReg, indD_reg, by = c("nom_region" = "libelle_region"))
 
-#Join des deux tableaux
-mapdataSDF_now_dep <- left_join(mapdata, indSDF_now_dep, by = c("region" = "libelle_departement"))
-
-mapSDF_now_dep <- ggplot(mapdataSDF_now_dep, aes(x=long, y=lat, group=group)) +
+mapD_now_reg <- ggplot(regD, aes(x=long, y=lat, group=group)) +
   geom_polygon(aes(fill=valeur_actuelle),color = "black")+ 
-  scale_fill_gradient(name="personnes dans l'année*",low="cadetblue1",high="brown2",na.value="gray")
+  scale_fill_gradient(name="nombre de morts",low="green",high="red",na.value="gray")+
+  labs(title = "Mortalité sur les routes en 2022, par région ")
 
-#mapSDF_now_dep
-plotly::ggplotly(mapSDF_now_dep)
-
-mapSDF_for_dep <- ggplot(mapdataSDF_now_dep, aes(x=long, y=lat, group=group)) +
-  geom_polygon(aes(fill=valeur_initiale),color = "black")+ 
-  scale_fill_gradient(name="personnes dans l'année",low="cadetblue1",high="brown2",na.value="gray")
-
-plotly::ggplotly(mapSDF_for_dep)
-
-indSDF_now_reg <- filter(synthese_regional, mesure == "Nombre de personnes sans-abri ou en hébergement ayant obtenu un logement social")
-
-indSDF_now_dep
-
-regSDF_now_reg <- left_join(mapReg, indSDF_now_reg, by = c("nom_region" = "libelle_region"))
-
-mapSDF_now_reg <- ggplot(regfin, aes(x=long, y=lat, group=group)) +
-  geom_polygon(aes(fill=valeur_actuelle),color = "black")+ 
-  scale_fill_gradient(name="personnes dans l'année",low="cadetblue1",high="brown2",na.value="gray")
-
-plotly::ggplotly(mapSDF_now_reg)
-
-mapSDF_for_reg <- ggplot(regfin, aes(x=long, y=lat, group=group)) +
-  geom_polygon(aes(fill=valeur_initiale),color = "black")+ 
-  scale_fill_gradient(name="personnes dans l'année",low="cadetblue1",high="brown2",na.value="gray")
-
-plotly::ggplotly(mapSDF_for_reg)
+plotly::ggplotly(mapD_now_reg)
 ```
