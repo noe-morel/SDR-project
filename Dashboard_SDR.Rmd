@@ -34,6 +34,7 @@ synthese_departemental$libelle_departement <- tolower(synthese_departemental$lib
 synthese_departemental$libelle_departement <- gsub("`","",synthese_departemental$libelle_departement)
 synthese_departemental$libelle_departement <- tolower(gsub(' ','-',synthese_departemental$libelle_departement))
 
+methods = c("lm", "glm", "gam", "loess")
 ```
 
 ## Column {.sidebar}
@@ -44,6 +45,13 @@ selectInput(
   choices = indicateur$id_indicateur, selected = "taux-deploiement-fibre"
 
 )
+
+selectInput(
+  "method", label = "Methode de regression",
+  choices = methods, selected = "loess"
+
+)
+
 
   colourInput("colH", label ="Couleur pour les fortes valeurs", "darkorchid4")
   
@@ -62,8 +70,8 @@ fluidRow(renderPlotly({
       filter(detail_national, id_indicateur == input$indicateur),
       aes(x = date, y = valeur)
     ) +
-    geom_line() +
     geom_point() +
+    geom_smooth(method = input$method) +
     labs(title="Evolution au niveau national")
   
   # wrap ggplot object with ggplotly
