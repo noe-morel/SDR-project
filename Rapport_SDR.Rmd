@@ -67,23 +67,23 @@ synthese_regional$libelle_region <- tolower(synthese_regional$libelle_region)
 synthese_regional$libelle_region <- tolower(gsub(' ','-',synthese_regional$libelle_region))
 ```
 
-## Introduction aux données : 
+## Introduction aux données :
 
-Le jeu de données sélectionné est le « Baromètre des résultats de l\'action publique ». Il représente les résultats liés à 8 thématiques sur lesquelles le gouvernement s\'est engagé. Ces thématiques sont : 
+Le jeu de données sélectionné est le « Baromètre des résultats de l'action publique ». Il représente les résultats liés à 8 thématiques sur lesquelles le gouvernement s'est engagé. Ces thématiques sont : 
 
--   L\'éducation et la jeunesse
+-   L'éducation et la jeunesse
 
--   L\'économie et l\'emploi
+-   L'économie et l'emploi
 
 -   La Transition écologique
 
--   L\'Agriculture
+-   L'Agriculture
 
 -   La sécurité
 
 -   La justice
 
--   La santé, la famille et l\'handicap
+-   La santé, la famille et l'handicap
 
 -   Le Logement
 
@@ -91,17 +91,17 @@ Le jeu de données sélectionné est le « Baromètre des résultats de l\'acti
 
 -   La culture et les sports
 
-Ainsi pour chaque thématique, de nombreuses mesures sont données. Et pour chacune de ces mesures, un unique indicateur est fourni. Cet indicateur est décliné à l\'échelle nationale, régionale et départementale.
+Ainsi pour chaque thématique, de nombreuses mesures sont données. Et pour chacune de ces mesures, un unique indicateur est fourni. Cet indicateur est décliné à l'échelle nationale, régionale et départementale.
 
 De plus on a pour chaque indicateur, sa valeur entre une date initiale (au plus tôt 2017) et sa valeur cible en 2022. 
 
-Ce jeu de données était donc très intéressant du fait que l\'on puisse observer les évolutions temporelles, mais aussi les disparités géographiques et l\'impact du changement d\'échelle. Ce qui permet des visualisations très diverses et donc intéressantes. 
+Ce jeu de données était donc très intéressant du fait que l'on puisse observer les évolutions temporelles, mais aussi les disparités géographiques et l'impact du changement d'échelle. Ce qui permet des visualisations très diverses et donc intéressantes. 
 
-Nous commencerons par une analyse approfondie d\'une mesure (le Plan 1 jeune 1 solution), puis nous évaluerons les différences géographique à l\'aide de cartes. 
+Nous commencerons par une analyse approfondie d'une mesure (le Plan 1 jeune 1 solution), puis nous évaluerons les différences géographique à l'aide de cartes. 
 
-## Utilisation de Git : 
+## Utilisation de Git :
 
-Afin de pouvoir tous travailler en simultané sur le Dashboard et le Rapport, nous avons décidé de versionner le projet grâce à Git. C\'était la première fois que nous utilisions Git sur R, et cela a été plutôt concluant et nous a permis de travailler ensemble. 
+Afin de pouvoir tous travailler en simultané sur le Dashboard et le Rapport, nous avons décidé de versionner le projet grâce à Git. C'était la première fois que nous utilisions Git sur R, et cela a été plutôt concluant et nous a permis de travailler ensemble. 
 
 ## Plan 1 jeune 1 solution
 
@@ -262,11 +262,11 @@ L'évolution des recrutements du Vaucluse est très proche de l'évolution natio
 
 Les 3 autres départements présentent de plus grandes variations, avec une chute du recrutement plus importante que la moyenne en 2020, mais des augmentations pour 2021 et 2022 plus importantes avec un gain entre 2019 et 2022 autours des 33%. Cette progression est d'autant plus marquée pour le département des Bouches-du-Rhône. On peut donc supposer que ce sont principalement ces 3 département qui dépendent du tourisme dans la région.
 
-## Visualisation sous forme de cartes : 
+## Visualisation sous forme de cartes :
 
-Après avoir visualisé des données à l\'aide de graphes usuels, nous avons réfléchi à implémenter une représentation visuelle différente et plus adaptée à notre problème. Étant donné que tous nos résultats étaient dépendant d\'un endroit géographique que ce soit national, en fonction des régions ou en fonction des départements, la mise en place de cartes a donc semblé naturelle. Afficher les résultats sous forme de cartes en fonction des régions ou en fonction des départements permettrait d\'avoir une vision plus facile et naturelle de l\'ensemble des résultats et également de voir les effets de voisinage que les résultats pouvaient engendrés. En effet nous nous attendions a retrouvé des masses groupées de départements par exemple ou des clivages Nord/Sud. 
+Après avoir visualisé des données à l'aide de graphes usuels, nous avons réfléchi à implémenter une représentation visuelle différente et plus adaptée à notre problème. Étant donné que tous nos résultats étaient dépendant d'un endroit géographique que ce soit national, en fonction des régions ou en fonction des départements, la mise en place de cartes a donc semblé naturelle. Afficher les résultats sous forme de cartes en fonction des régions ou en fonction des départements permettrait d'avoir une vision plus facile et naturelle de l'ensemble des résultats et également de voir les effets de voisinage que les résultats pouvaient engendrés. En effet nous nous attendions a retrouvé des masses groupées de départements par exemple ou des clivages Nord/Sud. 
 
-Pour cela nous avons commencé par chercher dans la cheat sheet de ggplot2 et nous avons trouvé une fonction *mapdata.* Cette fonction après étude permettait de fournir des tables de différents pays. Le nombre de pays est très restreint, mais la France y est présente. Ainsi nous avons pu avoir un tableau constitué des latitudes et longitudes des département ainsi que leur nom. En revanche il n\'y avait pas ni les noms des régions ni les coordonnées des régions. 
+Pour cela nous avons commencé par chercher dans la cheat sheet de ggplot2 et nous avons trouvé une fonction *mapdata.* Cette fonction après étude permettait de fournir des tables de différents pays. Le nombre de pays est très restreint, mais la France y est présente. Ainsi nous avons pu avoir un tableau constitué des latitudes et longitudes des département ainsi que leur nom. En revanche il n'y avait pas ni les noms des régions ni les coordonnées des régions. 
 
 Nous avons alors décidé dans un premier temps de visualiser un indicateur en fonction des départements. Pour cela nous avons filtré le document synthétique des département pour ne conserver que les lignes correspondantes à cet indicateur, nous avons ensuite joint ces données avec les données de *mapdata*, ensuite nous avons représenté cette carte grâce à la fonction *polygon* qui permet de prendre des latitudes et longitudes en argument. 
 
@@ -274,7 +274,7 @@ Nous avons alors décidé dans un premier temps de visualiser un indicateur en f
 mapReg <- left_join(mapdata, reg_dep, by = c("region" = "nom_departement"))
 ```
 
-#### Mortalité sur les routes : 
+#### Mortalité sur les routes :
 
 ```{r}
 #selection indicateurs
@@ -292,7 +292,7 @@ plotly::ggplotly(mapD_now_dep)
 
 Nous avons choisi pour la première carte la mortalité sur la route. 
 
-Cette carte représente la mesure concernant la réduction de la mortalité sur les routes en France. Elle a pour indicateur le nombre de morts sur la route pour une une année donnée et en fonction de chaque département. Nous voyons sur la carte que le département ayant le plus de morts sur la route est les Bouches-du-Rhône avec 87 morts en 2022, tandis que le département le moins enclin à la mortalité sur les routes est le Lot avec seulement 5 morts en 2022. On remarque que les littoraux sont globalement les plus touchés, le littoral méditerranéen, atlantique et la manche. Mais la région lyonnaise est également assez touchée. La région parisienne a des valeurs plutôt moyennes, ce qui est assez étonnant, du fait de sa large population. Cela s\'explique surement par son urbanisation quasi-totale. De plus les zones où la mortalité est la plus faible sont également les zones où la population est la moins élevée ce qui paraît cohérent. 
+Cette carte représente la mesure concernant la réduction de la mortalité sur les routes en France. Elle a pour indicateur le nombre de morts sur la route pour une une année donnée et en fonction de chaque département. Nous voyons sur la carte que le département ayant le plus de morts sur la route est les Bouches-du-Rhône avec 87 morts en 2022, tandis que le département le moins enclin à la mortalité sur les routes est le Lot avec seulement 5 morts en 2022. On remarque que les littoraux sont globalement les plus touchés, le littoral méditerranéen, atlantique et la manche. Mais la région lyonnaise est également assez touchée. La région parisienne a des valeurs plutôt moyennes, ce qui est assez étonnant, du fait de sa large population. Cela s'explique surement par son urbanisation quasi-totale. De plus les zones où la mortalité est la plus faible sont également les zones où la population est la moins élevée ce qui paraît cohérent. 
 
 ```{r}
 mapD_for_dep <- ggplot(mapdataD_now_dep, aes(x=long, y=lat, group=group)) +
@@ -302,7 +302,7 @@ mapD_for_dep <- ggplot(mapdataD_now_dep, aes(x=long, y=lat, group=group)) +
 plotly::ggplotly(mapD_for_dep)
 ```
 
-Cette fois ci, la carte représente les même données mais en 2017 soit 7 ans avant la carte précédente. Cette fois ci le département ayant le plus de morts est encore une fois les Bouches-du-Rhône avec 122 morts sur les routes, tandis le département le moins enclin à la mortalité n\'est plus le Lot mais la Lozère avec 8 morts en 2017. On retrouve ici les même gradient de mortalités. Les littoraux demeurent les plus touchés, tout comme la région lyonnaise. En revanche la région Parisienne (surtout à cause de la Seine-et-Marne) est beaucoup plus touchées qu\'en 2022. Encoure une fois les régions les moins peuplées sont les moins touchées. On remarque cependant qu\'il y a eu une forte diminution du nombre de morts sur les routes depuis 2017 en effet la les valeurs les plus hautes ont diminuées de plus de 30% en 7 ans. La mesure du gouvernement a donc été respectée. 
+Cette fois ci, la carte représente les même données mais en 2017 soit 7 ans avant la carte précédente. Cette fois ci le département ayant le plus de morts est encore une fois les Bouches-du-Rhône avec 122 morts sur les routes, tandis le département le moins enclin à la mortalité n'est plus le Lot mais la Lozère avec 8 morts en 2017. On retrouve ici les même gradient de mortalités. Les littoraux demeurent les plus touchés, tout comme la région lyonnaise. En revanche la région Parisienne (surtout à cause de la Seine-et-Marne) est beaucoup plus touchées qu'en 2022. Encoure une fois les régions les moins peuplées sont les moins touchées. On remarque cependant qu'il y a eu une forte diminution du nombre de morts sur les routes depuis 2017 en effet la les valeurs les plus hautes ont diminuées de plus de 30% en 7 ans. La mesure du gouvernement a donc été respectée. 
 
 ```{r}
 indD_reg <- filter(synthese_regional, mesure == "Réduire la mortalité sur les routes")
@@ -317,9 +317,9 @@ mapD_now_reg <- ggplot(regD, aes(x=long, y=lat, group=group)) +
 plotly::ggplotly(mapD_now_reg)
 ```
 
-Nous avons déjà observé toutes les données par département, mais il pourrait être judicieux de prendre de la hauteur et observer les données à une échelles plus grande. Pour réaliser cela nous avons décidé d\'observer les mêmes données mais par région et non plus par département, afin de voir les différences notables. Ainsi il a fallu modifier le tableau regroupant toutes les latitudes et longitudes des départements afin de leur rajouter pour chaque la région associée. Nous avons donc importer un tableau regroupant tous les département et leur région associée et l\'avons joint à notre *mapdata* précédent.
+Nous avons déjà observé toutes les données par département, mais il pourrait être judicieux de prendre de la hauteur et observer les données à une échelles plus grande. Pour réaliser cela nous avons décidé d'observer les mêmes données mais par région et non plus par département, afin de voir les différences notables. Ainsi il a fallu modifier le tableau regroupant toutes les latitudes et longitudes des départements afin de leur rajouter pour chaque la région associée. Nous avons donc importer un tableau regroupant tous les département et leur région associée et l'avons joint à notre *mapdata* précédent.
 
-La première observation correspond à la mortalité sur les routes en 2022 mais cette fois-ci par région. Nous notons d\'emblée des différences majeures entre la carte des départements et celles des régions. La région la plus mortelle est la région Auvergne-Rhône-Alpes qui présente 317 morts, suivi de près par la Nouvelle Aquitaine avec 312. Bien que ces deux régions présentaient des départements à hauts-risque, ces département n\'étaient pas les plus élevés, et ces deux régions avaient également les plus faibles départements. Cela peut sûrement s\'expliquer par le nombre d\'habitants dans ces deux régions (respectivement 8 et 6 millions), la deuxième et troisième région les plus peuplée. De même la région avec le moins de morts est la Corse avec 42 qui est expliquée par sa population de 350 000 habitants la rendant la région la moins peuplée. En revanche Paris et sa région sont dans la moyenne avec 209 morts alors qu\'il s\'agit de la région la plus peuplée, cela peut certainement s\'expliquer par sa petite superficie qui limite les accidents. 
+La première observation correspond à la mortalité sur les routes en 2022 mais cette fois-ci par région. Nous notons d'emblée des différences majeures entre la carte des départements et celles des régions. La région la plus mortelle est la région Auvergne-Rhône-Alpes qui présente 317 morts, suivi de près par la Nouvelle Aquitaine avec 312. Bien que ces deux régions présentaient des départements à hauts-risque, ces département n'étaient pas les plus élevés, et ces deux régions avaient également les plus faibles départements. Cela peut sûrement s'expliquer par le nombre d'habitants dans ces deux régions (respectivement 8 et 6 millions), la deuxième et troisième région les plus peuplée. De même la région avec le moins de morts est la Corse avec 42 qui est expliquée par sa population de 350 000 habitants la rendant la région la moins peuplée. En revanche Paris et sa région sont dans la moyenne avec 209 morts alors qu'il s'agit de la région la plus peuplée, cela peut certainement s'expliquer par sa petite superficie qui limite les accidents. 
 
 ```{r}
 mapD_for_reg <- ggplot(regD, aes(x=long, y=lat, group=group)) +
@@ -330,9 +330,9 @@ mapD_for_reg <- ggplot(regD, aes(x=long, y=lat, group=group)) +
 plotly::ggplotly(mapD_for_reg)
 ```
 
-Cette nouvelle carte propose de représenter ces mêmes régions mais en 2017. En comparant avec la carte précédente on observe encore une fois une baisse des morts sur la route depuis 2017. La région la plus mortelle reste l\'Auvergne-Rhône-Alpes avec 410 morts en 2017, mais la deuxième place passe à l\'Occitane avec 392. Tandis que Paris est beaucoup plus haute qu\'en 2022 avec 319 morts sur les routes. La région avec la plus nette baisse entre 2022 et 2017 est la région Provence-Alpes-Cotes-D\'Azur avec une baisse de plus de 110 morts par an sur les routes ce qui est plutôt remarquable. 
+Cette nouvelle carte propose de représenter ces mêmes régions mais en 2017. En comparant avec la carte précédente on observe encore une fois une baisse des morts sur la route depuis 2017. La région la plus mortelle reste l'Auvergne-Rhône-Alpes avec 410 morts en 2017, mais la deuxième place passe à l'Occitane avec 392. Tandis que Paris est beaucoup plus haute qu'en 2022 avec 319 morts sur les routes. La région avec la plus nette baisse entre 2022 et 2017 est la région Provence-Alpes-Cotes-D'Azur avec une baisse de plus de 110 morts par an sur les routes ce qui est plutôt remarquable. 
 
-#### Aménagements cyclables : 
+#### Aménagements cyclables :
 
 ```{r}
 indCYC_now_dep <- filter(synthese_departemental, indicateur == "Kilomètres d'aménagements cyclables sécurisés")
@@ -356,9 +356,9 @@ mapCYC_for_dep <- ggplot(mapdataCYC_now_dep, aes(x=long, y=lat, group=group)) +
 plotly::ggplotly(mapCYC_for_dep)
 ```
 
-Les cartes désormais étudiées correspondent à la mesure voulant déployer l\'utilisation du vélo. Son indicateur représente le nombre de kilomètres d\'aménagement cyclables sécurisés. La première carte représente cet indicateur en fonction des départements en 2017. On observe que seulement une toute petite partie du territoire français présente de nombreuses pistes cyclables. La Gironde mêne la marche avec 2117 km de pistes cyclables tandis que la Creuse ne présente qu\'un kilomètre de piste cyclable aménagé. Le littoral atlantique est relativement bien aménagé avec environ 1000km par département tandis que le centre de la France et la diagonale du vide ont 50km ou moins par département. Nous observons également que le littoral de la Manche est relativement bien desservi alors que le littoral méditerranéen beaucoup moins malgré son attrait touristique. 
+Les cartes désormais étudiées correspondent à la mesure voulant déployer l'utilisation du vélo. Son indicateur représente le nombre de kilomètres d'aménagement cyclables sécurisés. La première carte représente cet indicateur en fonction des départements en 2017. On observe que seulement une toute petite partie du territoire français présente de nombreuses pistes cyclables. La Gironde mêne la marche avec 2117 km de pistes cyclables tandis que la Creuse ne présente qu'un kilomètre de piste cyclable aménagé. Le littoral atlantique est relativement bien aménagé avec environ 1000km par département tandis que le centre de la France et la diagonale du vide ont 50km ou moins par département. Nous observons également que le littoral de la Manche est relativement bien desservi alors que le littoral méditerranéen beaucoup moins malgré son attrait touristique. 
 
-La même carte en 2022 montre quelques changements. Bien que la Gironde reste en tête avec 2069km aménagés, le Nord n\'est pas loin derrière. La Creuse, quant à elle, reste dernière avec 5km aménagés (ce qui représente tout de même cinq fois plus qu\'en 2017). Nous remarquons que tout le littoral Atlantique a largement investi dans la mise en place de pistes cyclables, ce qui lui donne les devant par rapport au reste de la France. Tandis que le centre de la France reste très loin derrière avec la Corse. Cependant il est a noté une hausse générale et assez massive du nombre de pistes cyclables aménagées environ 25% pour la plupart des départements. 
+La même carte en 2022 montre quelques changements. Bien que la Gironde reste en tête avec 2069km aménagés, le Nord n'est pas loin derrière. La Creuse, quant à elle, reste dernière avec 5km aménagés (ce qui représente tout de même cinq fois plus qu'en 2017). Nous remarquons que tout le littoral Atlantique a largement investi dans la mise en place de pistes cyclables, ce qui lui donne les devant par rapport au reste de la France. Tandis que le centre de la France reste très loin derrière avec la Corse. Cependant il est a noté une hausse générale et assez massive du nombre de pistes cyclables aménagées environ 25% pour la plupart des départements. 
 
 ```{r}
 indCYC_now_reg <- filter(synthese_regional, indicateur == "Kilomètres d'aménagements cyclables sécurisés")
@@ -380,12 +380,13 @@ mapCYC_for_reg <- ggplot(regCYC_now_reg, aes(x=long, y=lat, group=group)) +
 plotly::ggplotly(mapCYC_for_reg)
 ```
 
-Nous nous intéressons maintenant au même indicateur mais cette fois ci pour les régions. En 2017, nous observons des résultats cohérents avec ceux précédents. La région Nouvelle-Aquitaine, menée par la Gironde est la plus desservie en terme d\'aménagement cyclables avec 5548km de pistes cyclables. Cette région est très loin devant la Corse qui n\'a que 19km d\'aménagement cyclable. Cela s\'explique bien entendue par la taille de l\'île, de son nombre d\'habitant, mais également de sa topologie présentant de forts reliefs. La région Grand-Est est très proche de la Nouvelle-Aquitaine. Cela s\'explique par un très fort aménagement cyclable dans la Moselle et le Bas-Rhin. La région Parisienne est relativement basse en étant la 5e région de France, ce qui pourrait paraître étonnant, mais qui s\'explique par sa taille. 
+Nous nous intéressons maintenant au même indicateur mais cette fois ci pour les régions. En 2017, nous observons des résultats cohérents avec ceux précédents. La région Nouvelle-Aquitaine, menée par la Gironde est la plus desservie en terme d'aménagement cyclables avec 5548km de pistes cyclables. Cette région est très loin devant la Corse qui n'a que 19km d'aménagement cyclable. Cela s'explique bien entendue par la taille de l'île, de son nombre d'habitant, mais également de sa topologie présentant de forts reliefs. La région Grand-Est est très proche de la Nouvelle-Aquitaine. Cela s'explique par un très fort aménagement cyclable dans la Moselle et le Bas-Rhin. La région Parisienne est relativement basse en étant la 5e région de France, ce qui pourrait paraître étonnant, mais qui s'explique par sa taille. 
 
-En observant la deuxième carte, des régions en 2022, nous pouvons d\'emblée constater l\'évolution très rapide du nombre de kilomètres d\'aménagement cyclable sécurisés. En effet, les régions les plus hautes, comme la Nouvelle-Aquitaine ou le Grand-Est voient leurs effectif passer à 7432 et 7108, soit presque 2000 km de plus en 7 ans. La Corse reste loin derrière avec 59 km (le triple qu\'en 2017 néanmoins). Enfin, les régions Hauts-de-France et Pays de la Loire progressent également nettement en sept ans.
+En observant la deuxième carte, des régions en 2022, nous pouvons d'emblée constater l'évolution très rapide du nombre de kilomètres d'aménagement cyclable sécurisés. En effet, les régions les plus hautes, comme la Nouvelle-Aquitaine ou le Grand-Est voient leurs effectif passer à 7432 et 7108, soit presque 2000 km de plus en 7 ans. La Corse reste loin derrière avec 59 km (le triple qu'en 2017 néanmoins). Enfin, les régions Hauts-de-France et Pays de la Loire progressent également nettement en sept ans.
 
 #### 
-Bornes de recharge pour véhicules électriques : 
+
+#### Bornes de recharge pour véhicules électriques :
 
 ```{r}
 indELEC_now_dep <- filter(synthese_departemental, indicateur == "Nombre de bornes de recharge pour véhicules électriques déployées")
@@ -429,16 +430,17 @@ plotly::ggplotly(mapELEC_for_reg)
 
 ```
 
-Le choix de ce nouvel indicateur s\'est fait à la suite du précédent. Nous voulions voir si les départements et régions de France où les pistes cyclables étaient le plus développées correspondaient également aux régions et départements possédant le plus de bornes de recharges électriques. Ainsi nous pouvions imaginer une volonté de sortie des mobilités polluantes.
+Le choix de ce nouvel indicateur s'est fait à la suite du précédent. Nous voulions voir si les départements et régions de France où les pistes cyclables étaient le plus développées correspondaient également aux régions et départements possédant le plus de bornes de recharges électriques. Ainsi nous pouvions imaginer une volonté de sortie des mobilités polluantes.
 
-La première carte que nous étudions est celle du nombre de bornes de recharge électriques déployées en 2019 par département. On remarque que les trois départements ayant un déploiement le plus importantes sont Paris (1728 bornes), la Gironde (998 bornes) et le Nord (824 bornes). Paris domine donc, ce qui est logique avec la richesse générale de ce département. Cependant les deux autre départements sont cohérents avec la mise en place de pistes cyclables, une effet ils représentent tous les deux les départements les plus couverts d\'aménagements cyclables. Le département possédant le moins de bornes est la Haute-Loire avec 12 bornes. Cela peut s\'expliquer par la géographie agricole d\'un tel département. 
+La première carte que nous étudions est celle du nombre de bornes de recharge électriques déployées en 2019 par département. On remarque que les trois départements ayant un déploiement le plus importantes sont Paris (1728 bornes), la Gironde (998 bornes) et le Nord (824 bornes). Paris domine donc, ce qui est logique avec la richesse générale de ce département. Cependant les deux autre départements sont cohérents avec la mise en place de pistes cyclables, une effet ils représentent tous les deux les départements les plus couverts d'aménagements cyclables. Le département possédant le moins de bornes est la Haute-Loire avec 12 bornes. Cela peut s'expliquer par la géographie agricole d'un tel département. 
 
-En comparant ces résultats avec ceux de 2022 nous observons une augmentation très élevée du nombre de bornes de recharges déployées, la plupart des départements voyant le nombre au moins doubler. Paris reste loin devant avec 5058 bornes déployées, suivie du Nord (2950 bornes), et de la Gironde (2200). Nous remarquons également une aumentation très grande pour les Bouches-du-Rhônes. Ces augmentations énormes montrent qu\'en moins de trois ans, la présence d\'un parc électrique en France s\'est imposé comme une obligation. En 2022 c\'est le Cantal qui passe dernière avec seulement 95 bornes déployées. On peut donc en déduire que les bornes sont le plus déployées dans les départements possédant une métropole. 
+En comparant ces résultats avec ceux de 2022 nous observons une augmentation très élevée du nombre de bornes de recharges déployées, la plupart des départements voyant le nombre au moins doubler. Paris reste loin devant avec 5058 bornes déployées, suivie du Nord (2950 bornes), et de la Gironde (2200). Nous remarquons également une aumentation très grande pour les Bouches-du-Rhônes. Ces augmentations énormes montrent qu'en moins de trois ans, la présence d'un parc électrique en France s'est imposé comme une obligation. En 2022 c'est le Cantal qui passe dernière avec seulement 95 bornes déployées. On peut donc en déduire que les bornes sont le plus déployées dans les départements possédant une métropole. 
 
-Les cartes des régions montrent également l\'augmentation énorme du nombre de bornes déployées, nous passons d\'un maximum en 2019 pour l\'Ile-de-France de 3936 à plus de 15000 en 2022. Ce qui montre encore la domination de la région Parisienne face aux autres région qui restent loin derrière. Et les régions présentant les plus grosses aires urbaines présentent plus de bornes que les régions avec de plus petites aires urbaines. 
+Les cartes des régions montrent également l'augmentation énorme du nombre de bornes déployées, nous passons d'un maximum en 2019 pour l'Ile-de-France de 3936 à plus de 15000 en 2022. Ce qui montre encore la domination de la région Parisienne face aux autres région qui restent loin derrière. Et les régions présentant les plus grosses aires urbaines présentent plus de bornes que les régions avec de plus petites aires urbaines. 
 
 #### 
-Logements sociaux :
+
+#### Logements sociaux :
 
 ```{r}
 indSDF_now_dep <- filter(synthese_departemental, indicateur == "Nombre de personnes sans-abri ou en hébergement ayant obtenu un logement social")
@@ -480,10 +482,20 @@ mapSDF_for_reg <- ggplot(regSDF_now_reg, aes(x=long, y=lat, group=group)) +
 plotly::ggplotly(mapSDF_for_reg)
 ```
 
-La dernière série de cartes que nous avons sélectionné pour étude est celle du nombre de personnes sans-abris ou en hébergement ayant obtenu un logement social. Avant de regarder les résultats, nous nous attendons à avoir une répartition des résultats très clivée, en ayant beaucoup d\'hébergement dans les plus grandes villes Française (Paris, Lyon, Marseille, Nantes...), et très peu dans les département et régions les moins densément peuplée. Nous pensons également avoir une valeur importante pour les départements du Nord étant donnée la situation d\'attente de migration si déroulant. 
+La dernière série de cartes que nous avons sélectionné pour étude est celle du nombre de personnes sans-abris ou en hébergement ayant obtenu un logement social. Avant de regarder les résultats, nous nous attendons à avoir une répartition des résultats très clivée, en ayant beaucoup d'hébergement dans les plus grandes villes Française (Paris, Lyon, Marseille, Nantes...), et très peu dans les département et régions les moins densément peuplée. Nous pensons également avoir une valeur importante pour les départements du Nord étant donnée la situation d'attente de migration si déroulant. 
 
-On peut observer dans la première carte des départements en 2021 une importante concentration de personnes obtenant un logement social dans toutes les métropoles françaises. Notamment avec 2420 obtention à Paris, et plus de 1000 obtentions dans les autres grandes villes. Cependant le département présentant le plus haut nombre obtention de logement social est le Nord avec 2702 obtentions. Tout cela est cohérent avec les estimations que nous avions faites avant d\'avoir accès aux résultats. En revanche les Bouches-du-Rhône présentent seulement 1000 obtention ce qui est très loin des autres grandes villes d\'autant plus que Marseille est la deuxième plus grande ville de France. La Lozère est encore une fois dernière avec seulement 2 obtentions de logement social en 2021, ceci s\'explique par sa démographie très faible.
+On peut observer dans la première carte des départements en 2021 une importante concentration de personnes obtenant un logement social dans toutes les métropoles françaises. Notamment avec 2420 obtention à Paris, et plus de 1000 obtentions dans les autres grandes villes. Cependant le département présentant le plus haut nombre obtention de logement social est le Nord avec 2702 obtentions. Tout cela est cohérent avec les estimations que nous avions faites avant d'avoir accès aux résultats. En revanche les Bouches-du-Rhône présentent seulement 1000 obtention ce qui est très loin des autres grandes villes d'autant plus que Marseille est la deuxième plus grande ville de France. La Lozère est encore une fois dernière avec seulement 2 obtentions de logement social en 2021, ceci s'explique par sa démographie très faible.
 
-Une année après, en 2022, nous observons une augmentation relativement faible des personnes obtenant un logement social. Cette fois ci, Paris est devant avec 3400 obtentions et la Lozère reste dernière avec 11 obtentions. Nous ne constatons pas de mouvement particulier des départements prodiguant le plus d\'obtentions, cela reste globalement autour des grandes villes. 
+Une année après, en 2022, nous observons une augmentation relativement faible des personnes obtenant un logement social. Cette fois ci, Paris est devant avec 3400 obtentions et la Lozère reste dernière avec 11 obtentions. Nous ne constatons pas de mouvement particulier des départements prodiguant le plus d'obtentions, cela reste globalement autour des grandes villes. 
 
-Quant à l\'observation par régions, nous pouvons confirmer la légère augmentation d\'obtention et également la large domination de la région parisienne avec 12214 obtentions en 2021 et 15065 obtentions en 2022. On en conclut donc que moins une région est peuplée, moins elle propose des logements sociaux. Ce à quoi nous nous attendions. 
+Quant à l'observation par régions, nous pouvons confirmer la légère augmentation d'obtention et également la large domination de la région parisienne avec 12214 obtentions en 2021 et 15065 obtentions en 2022. On en conclut donc que moins une région est peuplée, moins elle propose des logements sociaux. Ce à quoi nous nous attendions. 
+
+## Conclusion
+
+En conclusion de ce projet de visualisation de données axé sur l'impact des mesures gouvernementales, il est indéniable que l'exploration de la base de données a été fascinante et révélatrice. L'analyse des chiffres a permis de mettre en lumière les résultats globalement positifs des mesures gouvernementales mises en place. Cependant, il est crucial de souligner la nécessité de relativiser ces chiffres, étant donné qu'ils proviennent de sources gouvernementales.
+
+Le caractère instructif de ce projet réside dans sa capacité à rendre les informations complexes accessibles à un large public grâce à des visualisations claires et compréhensibles. Les diverses représentations graphiques ont joué un rôle essentiel dans la communication des résultats, permettant une interprétation visuelle qui transcende les barrières techniques.
+
+Il est à noter que bien que les chiffres témoignent d'une amélioration générale, il est essentiel de garder à l'esprit le contexte dans lequel ces données ont été collectées. L'objectivité et la transparence doivent demeurer au cœur de toute analyse, surtout lorsque les données émanent directement du gouvernement. Les conclusions tirées de ce rapport soulignent la nécessité d'une approche critique et d'une prise de recul vis-à-vis des données fournies.
+
+En définitive, ce projet de visualisation de données a constitué une expérience enrichissante, mettant en évidence l'importance cruciale d'une compréhension approfondie des données sous-jacentes. Les leçons tirées de cette étude contribuent non seulement à notre compréhension des impacts des mesures gouvernementales, mais renforcent également l'importance de la transparence et de la vérification indépendante dans l'évaluation de telles initiatives.
