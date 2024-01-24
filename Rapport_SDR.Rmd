@@ -488,7 +488,6 @@ On peut observer dans la première carte des départements en 2021 une important
 
 Une année après, en 2022, nous observons une augmentation relativement faible des personnes obtenant un logement social. Cette fois ci, Paris est devant avec 3400 obtentions et la Lozère reste dernière avec 11 obtentions. Nous ne constatons pas de mouvement particulier des départements prodiguant le plus d'obtentions, cela reste globalement autour des grandes villes. 
 
-<<<<<<< HEAD
 Quant à l\'observation par régions, nous pouvons confirmer la légère augmentation d\'obtention et également la large domination de la région parisienne avec 12214 obtentions en 2021 et 15065 obtentions en 2022. On en conclut donc que moins une région est peuplée, moins elle propose des logements sociaux. Ce à quoi nous nous attendions. 
 
 
@@ -509,9 +508,6 @@ Enfin, dans un but d'accessibilité, nous avons ajouté à l'utilisateur la poss
 
 
 
-=======
-Quant à l'observation par régions, nous pouvons confirmer la légère augmentation d'obtention et également la large domination de la région parisienne avec 12214 obtentions en 2021 et 15065 obtentions en 2022. On en conclut donc que moins une région est peuplée, moins elle propose des logements sociaux. Ce à quoi nous nous attendions. 
-
 ## Conclusion
 
 En conclusion de ce projet de visualisation de données axé sur l'impact des mesures gouvernementales, il est indéniable que l'exploration de la base de données a été fascinante et révélatrice. L'analyse des chiffres a permis de mettre en lumière les résultats globalement positifs des mesures gouvernementales mises en place. Cependant, il est crucial de souligner la nécessité de relativiser ces chiffres, étant donné qu'ils proviennent de sources gouvernementales.
@@ -521,4 +517,3 @@ Le caractère instructif de ce projet réside dans sa capacité à rendre les in
 Il est à noter que bien que les chiffres témoignent d'une amélioration générale, il est essentiel de garder à l'esprit le contexte dans lequel ces données ont été collectées. L'objectivité et la transparence doivent demeurer au cœur de toute analyse, surtout lorsque les données émanent directement du gouvernement. Les conclusions tirées de ce rapport soulignent la nécessité d'une approche critique et d'une prise de recul vis-à-vis des données fournies.
 
 En définitive, ce projet de visualisation de données a constitué une expérience enrichissante, mettant en évidence l'importance cruciale d'une compréhension approfondie des données sous-jacentes. Les leçons tirées de cette étude contribuent non seulement à notre compréhension des impacts des mesures gouvernementales, mais renforcent également l'importance de la transparence et de la vérification indépendante dans l'évaluation de telles initiatives.
->>>>>>> origin/main
