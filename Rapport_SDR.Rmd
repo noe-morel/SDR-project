@@ -176,7 +176,7 @@ Tout d'abord on peut remarquer que l'Île de France est une très grande région
 
 En raison des fortes disparités de population en fonction de la région, ce graphe ne nous permet pas de faire des observations précises. Ainsi pour offrir un autre point de vue, nous avons décidé de représenter le pourcentage d'évolution du recrutement entre chaque année, en enlevant Mayotte qui ne présente donc pas d'informations.
 
-```{r 1 jeune 1 solution Regions, fig.width=14}
+```{r 1 jeune 1 solution Regions Normalise, fig.width=14}
 
 UnJeuneNationalPC <- detail_regional |>
   filter(mesure=="Plan 1 jeune 1 solution" & month(date)==7 & code_region!="06") |>
@@ -487,3 +487,22 @@ On peut observer dans la première carte des départements en 2021 une important
 Une année après, en 2022, nous observons une augmentation relativement faible des personnes obtenant un logement social. Cette fois ci, Paris est devant avec 3400 obtentions et la Lozère reste dernière avec 11 obtentions. Nous ne constatons pas de mouvement particulier des départements prodiguant le plus d\'obtentions, cela reste globalement autour des grandes villes. 
 
 Quant à l\'observation par régions, nous pouvons confirmer la légère augmentation d\'obtention et également la large domination de la région parisienne avec 12214 obtentions en 2021 et 15065 obtentions en 2022. On en conclut donc que moins une région est peuplée, moins elle propose des logements sociaux. Ce à quoi nous nous attendions. 
+
+
+## Dashboard interactif : 
+
+Enfin, nous nous sommes intéressés à comment réaliser un dashboard interactif. L'objectif était simple : permettre à l'utilisateur de naviguer dans l'entièreté de nos donnés et de lui donner accès à la meilleure expérience utilisateur possible.
+
+Pour celà, il falait donc que les graphiques associés aux données soient affichés en temps réel en fonction des choix de l'utilisateur. Nous avons rapidement choisi de partir sur **Shiny** qui semblait être une manière simple de permettre à un utilisateur de naviguer parmi les données. Shiny est une librairie qui permet la création de pages web interactives sur lesquelles il est possible de réaliser toutes les analyses et actions que l'on aurait pu faire sur R autrement. Ici, nous nous intéressons seulement à la partie intéractive et nous faisons donc une page web qui ne sera utilisée qu'en local. Nous avons aussi utilisé **Ploty** qui est compatible avec Shiny et permet d'intéragir avec les graphiques afin d'avoir accès aux données dans les graphiques et de les manipuler.
+
+![Résultat du Dashboard interactif](dashboard.png)
+Ceci est le résultat auquel nous sommes arrivés sur notre dashboard. A gauche, on voit les différents choix que peut faire l'utilisateur. Il peut choisir un indicateur parmi les 58 qui sont disponibles, et ce choix sera directement reflété sur la partie de droite. Cette partie de droite comprend une évolution au niveau national, avec les points de données en fonction du temps et une regression dont on peut aussi choisir la méthode à gauche, une carte présentant les derniers résultats disponibles temporellement au niveau départemental, et des précisions sur l'indicateur choisi avec la mesure associée, un intitulé plus long de la mesure et l'unité des données.
+
+Cette combinaison permet d'avoir une prise d'information très rapide et synthétique sur les données. En effet, on peut à la fois voir la tendance (quand il y en a une) au niveau national et l'expression des différences au niveau territorial. Par exemple, on peut voir des différences très marqués sur le territoire, avec l'exemple le plus marqué étant les données sur l'agriculture où on n'a pas de données dans Paris, sans trop de surprise.
+
+Enfin, dans un but d'accessibilité, nous avons ajouté à l'utilisateur la possibilité de choisir les couleurs qui forment le gradient sur la carte des départements. En effet, pour que ça puisse être adapté aux sensibilités et aux handicaps de tous, l'utilisateur peut modifier les couleurs. Pour celà, nous avons utilisé une petite librairie qui est un complément à Shiny, **colourpicker**, et qui permet de choisir librement une couleur. 
+
+![Choix des couleurs avec colourpicker](colourpicker.png)
+
+
+
